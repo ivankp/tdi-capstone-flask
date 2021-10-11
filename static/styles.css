@@ -1,0 +1,13 @@
+.drop {
+  background-color: #f6f6f6;
+  border: 1px solid #ddd;
+  font-size: smaller;
+  width: 15em;
+}
+.drop > * {
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.drop > *:hover {
+  background-color: #ddd;
+}

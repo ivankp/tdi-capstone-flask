@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boardgame Analysis</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,
+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIg
+NTEyIj48ZyBmaWxsPSIjRjRDNzExIj48cGF0aCBkPSJNMjY2LjUgMzUuNGE4LjUgOC41IDAgMSAw
+LTQuMiAxNi42IDI1LjUgMjUuNSAwIDAgMSAxOC41IDE4LjUgOC41IDguNSAwIDAgMCAxNi42LTQu
+MiA0Mi42IDQyLjYgMCAwIDAtMzEtMzAuOXoiLz48cGF0aCBkPSJNMzQ5LjkgNDI2LjdoLTEuMWE0
+MS41IDQxLjUgMCAwIDAgOS42LTI1LjZjMC0xNi43LTguMi0zMy42LTE3LjgtNTMuMy0xMS42LTI0
+LTI0LjktNTEuMi0yNC45LTgzLjNhMzU0IDM1NCAwIDAgMSA2LjktNzcuOCAyNS42IDI1LjYgMCAw
+IDAtNi45LTUwLjJoLTExLjVBNzYuNyA3Ni43IDAgMCAwIDI1NiAwYTc2LjkgNzYuOSAwIDAgMC00
+OC4yIDEzNi41aC0xMS41YTI1LjYgMjUuNiAwIDAgMCAwIDUxLjJoODUuM2E4LjUgOC41IDAgMSAw
+IDAtMTdoLTg1LjNhOC41IDguNSAwIDAgMSAwLTE3LjFoMTE5LjRhOC41IDguNSAwIDAgMSAwIDE3
+bC0uMy4xYy0uNiAwLTEuMi4yLTEuOC40bC0xLjQuNGMtLjUuMi0xIC42LTEuNCAxLS40LjItLjku
+NS0xLjMuOWwtLjggMS4yYy0uMy41LS43IDEtLjkgMS42bC0uMi4zYy0uMyAxLjEtOSAyNy42LTkg
+ODggMCAzNiAxNC44IDY2LjQgMjYuNyA5MC44IDguNiAxNy43IDE2IDMzIDE2IDQ1LjggMCAxMi40
+LTEzLjEgMjUuNi0yNS42IDI1LjZoLTg1LjNhOC41IDguNSAwIDEgMCAwIDE3aDExOS41YzEyLjQg
+MCAyNS42IDEzLjIgMjUuNiAyNS42VjQ5NWgtMjM5di0yNS42YzAtMTIuNCAxMy4yLTI1LjYgMjUu
+Ni0yNS42aDM0LjJhOC41IDguNSAwIDEgMCAwLTE3Yy0xMi41IDAtMjUuNi0xMy4yLTI1LjYtMjUu
+NiAwLTEyLjggNy40LTI4IDE2LTQ1LjggMTEuOS0yNC40IDI2LjYtNTQuOCAyNi42LTkwLjggMC0x
+MS4yLTEuNC0yOC44LTQuMS01Mi4zYTguNSA4LjUgMCAxIDAtMTcgMmMyLjcgMjIuNSA0IDQwIDQg
+NTAuMyAwIDMyLTEzLjIgNTkuMy0yNC44IDgzLjMtOS42IDE5LjctMTcuOCAzNi42LTE3LjggNTMu
+MyAwIDkuMiAzLjcgMTguMiA5LjYgMjUuNmgtMWE0NSA0NSAwIDAgMC00Mi43IDQyLjZ2MzQuMmMw
+IDQuNyAzLjggOC41IDguNSA4LjVoMjU2YzQuNyAwIDguNS0zLjggOC41LTguNXYtMzQuMmE0NSA0
+NSAwIDAgMC00Mi42LTQyLjZ6TTI1NiAxMzYuNWE1OS44IDU5LjggMCAxIDEgLjEtMTE5LjYgNTku
+OCA1OS44IDAgMCAxLS4xIDExOS42eiIvPjwvZz48L3N2Zz4K
+">
+<link rel="stylesheet" href="static/styles.css" type="text/css">
+<script>
+{% if script %}
+{{ script | safe }}
+{% endif %}
+</script>
+<script src="static/main.js"></script>
+</head>
+<body>
+
+<div>
+<p>Enter game parameters:</p>
+<form id="form">
+  <div>
+    <div>Mechanics:</div>
+    <input id="input_mech" name="mech" type="text" placeholder="Mechanics">
+    <div id="input_mech_drop" class="drop"></div>
+  </div><div>
+    <div>Categories:</div>
+    <input id="input_cat" name="cat" type="text" placeholder="Category">
+    <div id="input_cat_drop" class="drop"></div>
+  </div>
+  <input type="submit" value="Enter">
+</form>
+</div>
+
+</body>
+</html>
