@@ -75,3 +75,5 @@ def form_eval():
         },separators=(',',':')),
         mimetype='application/json')
 
+if __name__ == '__main__':
+    app.run()
