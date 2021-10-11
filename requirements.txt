@@ -1,3 +1,4 @@
 flask
+flask_compress
 gunicorn
 bokeh
