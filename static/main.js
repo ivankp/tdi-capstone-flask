@@ -47,7 +47,7 @@ function add_attr_field() {
   const div = _id('attrs');
   const field = $(div,'div',['field']);
   const input = $(field,'input',{
-    name: 'attr', type: 'text', placeholder: 'Attribute'
+    name: 'attr', type: 'text', placeholder: 'Attribute', autocomplete: 'off'
   });
   let b = $(field,'button');
   b.textContent = '−';

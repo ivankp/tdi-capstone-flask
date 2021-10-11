@@ -7,6 +7,7 @@
   border: 1px solid #ddd;
   font-size: smaller;
   width: 15em;
+  white-space: normal;
 }
 .drop > * {
   cursor: pointer;

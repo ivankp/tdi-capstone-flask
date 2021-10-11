@@ -8,6 +8,7 @@ from flask_compress import Compress
 from bokeh.plotting import figure
 from bokeh.embed import json_item
 from bokeh.resources import CDN
+from bokeh.models import Range1d
 
 app = Flask(__name__)
 Compress(app)
@@ -39,18 +40,30 @@ def form_eval():
             x_axis_label='Year',
             y_axis_label='Average Rating',
         )
+        fig.x_range = Range1d(2000-0.5,2021+0.5)
 
-        xs = [ x+2000 for x in range(len(trend)) ]
-        ys = [ x[1] for x in trend ]
-        fig.line(
-            xs, ys,
-            legend_label = 'this',
-            line_width = 2
-        )
-        fig.circle(
-            xs, ys,
-            size = 5
-        )
+        for t,(name,color) in zip(trend, (
+            ('this','#FF7F0E'),
+            ('other','#1F77B4')
+        )):
+            xs, ys = zip(*(
+                [ i+2000, x[1] ]
+                for i,x in enumerate(t)
+                if x[0] > 0
+            ))
+
+            fig.line(
+                xs, ys,
+                line_width = 2,
+                color = color,
+                legend_label = name
+            )
+            fig.circle(
+                xs, ys,
+                size = 5,
+                color = color,
+                legend_label = name
+            )
 
         fig.legend.location = 'top_left'
 

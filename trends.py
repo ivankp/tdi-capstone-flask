@@ -2,6 +2,7 @@
 
 import json, math
 from collections import defaultdict
+import numpy as np
 
 with open('../project/bgg_data_clean.json') as f:
     games = json.load(f)
@@ -15,7 +16,7 @@ for i,x in enumerate(cols):
 
 cols = [[i_mechanics,'m'],[i_categories,'c']]
 
-trends = defaultdict(lambda: [ [0,0,0] for _ in range(22) ])
+trends = defaultdict(lambda: np.zeros((22,3)))
 
 for g in data:
     y = g[i_year] - 2000
@@ -27,11 +28,18 @@ for g in data:
             m[1] += r
             m[2] += r*r
 
-for y in trends.values():
-    for m in y:
-        if m[0] > 0:
-            m[1] /= m[0]
-            m[2] = math.sqrt(m[2]/m[0] - m[1]*m[1])
+trends = { name: (
+    this.tolist(),
+    sum( other for name2, other in trends.items() if name2 != name ).tolist()
+) for name, this in trends.items() }
+
+for name, trend in trends.items():
+    for ms in trend:
+        for m in ms:
+            m[0] = int(m[0])
+            if m[0] > 0:
+                m[1] /= m[0]
+                m[2] = math.sqrt(m[2]/m[0] - m[1]*m[1])
 
 with open('trends.json','w') as f:
     json.dump(trends,f,separators=(',',':'))
