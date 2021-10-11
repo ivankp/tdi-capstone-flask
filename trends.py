@@ -13,29 +13,25 @@ data  = games['data']
 for i,x in enumerate(cols):
     globals()['i_'+x] = i
 
-cols = [[i_mechanics,'mech'],[i_categories,'cat']]
+cols = [[i_mechanics,'m'],[i_categories,'c']]
 
-trends = {
-    a: defaultdict(lambda: [ [0,0,0] for _ in range(22) ])
-    for i,a in cols
-}
+trends = defaultdict(lambda: [ [0,0,0] for _ in range(22) ])
 
 for g in data:
     y = g[i_year] - 2000
     r = g[i_rating]
     for i,a in cols:
         for x in g[i]:
-            m = trends[a][x][y]
+            m = trends[f'{x} ({a})'][y]
             m[0] += 1
             m[1] += r
             m[2] += r*r
 
-for t in trends.values():
-    for y in t.values():
-        for m in y:
-            if m[0] > 0:
-                m[1] /= m[0]
-                m[2] = math.sqrt(m[2]/m[0] - m[1]*m[1])
+for y in trends.values():
+    for m in y:
+        if m[0] > 0:
+            m[1] /= m[0]
+            m[2] = math.sqrt(m[2]/m[0] - m[1]*m[1])
 
 with open('trends.json','w') as f:
     json.dump(trends,f,separators=(',',':'))

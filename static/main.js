@@ -43,35 +43,57 @@ function* enumerate(xs,i=0) {
   for (const x of xs) yield [i++, x];
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  for (const [a,all] of [['mech',all_mechanics],['cat',all_categories]]) {
-    const m =_id(`input_${a}`);
-    const d = _id(`input_${a}_drop`);
-    d.style.display = 'none';
-    m.addEventListener('keyup',function(){
-      clear(d);
-      const v = this.value.toUpperCase();
-      let hide = true;
-      for (const x of all) {
-        if (x.toUpperCase().indexOf(v) > -1) {
-          const opt = $(d,'div');
-          opt.textContent = x;
-          opt.addEventListener('click',function(){
-            m.value = x;
-            clear(d).style.display = 'none';
-          });
-          if (hide) hide = false;
-        }
+function add_attr_field() {
+  const div = _id('attrs');
+  const field = $(div,'div',['field']);
+  const input = $(field,'input',{
+    name: 'attr', type: 'text', placeholder: 'Attribute'
+  });
+  let b = $(field,'button');
+  b.textContent = '−';
+  b.addEventListener('click',function(e){
+    e.preventDefault();
+    if (div.childElementCount > 1)
+      field.remove();
+  });
+  b = $(field,'button');
+  b.textContent = '+';
+  b.addEventListener('click',function(e){
+    e.preventDefault();
+    add_attr_field();
+  });
+  const d = $(field,'div',{ style: { display: 'none' } },['drop']);
+  input.addEventListener('keyup',function(){
+    clear(d);
+    const v = this.value.toUpperCase();
+    let hide = true;
+    for (const attr of all_attributes) {
+      if (attr.toUpperCase().indexOf(v) > -1) {
+        const opt = $(d,'div');
+        opt.textContent = attr;
+        const input = this;
+        opt.addEventListener('click',function(){
+          input.value = attr;
+          clear(d).style.display = 'none';
+        });
+        if (hide) hide = false;
       }
-      d.style.display = hide ? 'none' : null;
-    });
-  }
+    }
+    d.style.display = hide ? 'none' : null;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  add_attr_field();
 
   _id('form').addEventListener('submit',function(e){
     e.preventDefault();
+    const req = {
+      attrs: [ ...this.querySelectorAll('#attrs input') ].map(x => x.value)
+    };
     fetch('eval', {
       method: 'POST',
-      body: JSON.stringify(Object.fromEntries(new FormData(this)))
+      body: JSON.stringify(req)
     }).then(r => r.json()
     ).then(r => {
       console.log(r);

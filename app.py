@@ -6,19 +6,22 @@ from flask_compress import Compress
 app = Flask(__name__)
 Compress(app)
 
+with open('attrs.js') as f:
+    attrs = f.read()
+
 with open('trends.json') as f:
     trends = json.load(f)
 
 @app.route('/')
 def index():
-    with open('mech_cats.js') as f:
-        mech_cats = f.read()
-    return render_template('index.html',script=mech_cats)
+    return render_template('index.html',script=attrs)
 
 @app.route('/eval',methods=['POST'])
 def form_eval():
     req = json.loads(request.data)
-    resp = { a: [ trends[a][v] ] for a,v in req.items() if v!='' }
+    resp = {
+        'trends': { x: trends[x] for x in req['attrs'] if x in trends }
+    }
     resp = json.dumps(resp,separators=(',',':'))
     return Response(resp,mimetype='application/json')
 
