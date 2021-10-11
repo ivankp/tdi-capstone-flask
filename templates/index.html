@@ -28,6 +28,9 @@ IDQuNyAzLjggOC41IDguNSA4LjVoMjU2YzQuNyAwIDguNS0zLjggOC41LTguNXYtMzQuMmE0NSA0
 NSAwIDAgMC00Mi42LTQyLjZ6TTI1NiAxMzYuNWE1OS44IDU5LjggMCAxIDEgLjEtMTE5LjYgNTku
 OCA1OS44IDAgMCAxLS4xIDExOS42eiIvPjwvZz48L3N2Zz4K
 ">
+{% if head %}
+{{ head | safe }}
+{% endif %}
 <link rel="stylesheet" href="static/styles.css" type="text/css">
 <script>
 {% if script %}

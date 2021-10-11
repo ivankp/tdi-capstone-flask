@@ -96,7 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
       body: JSON.stringify(req)
     }).then(r => r.json()
     ).then(r => {
-      console.log(r);
+      const div = clear(_id('trends'));
+      for (const [i,fig] of enumerate(r.trends)) {
+        const id = `trend_${i}`;
+        $(div,'div',{id});
+        Bokeh.embed.embed_item(fig,id);
+      }
     }).catch(e => { console.error(e); });
   });
 });
