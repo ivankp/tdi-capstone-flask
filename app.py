@@ -5,10 +5,10 @@ import json
 from flask import Flask, render_template, request, Response
 from flask_compress import Compress
 
-from bokeh.plotting import figure
+from bokeh.plotting import figure, ColumnDataSource
 from bokeh.embed import json_item
 from bokeh.resources import CDN
-from bokeh.models import Range1d
+from bokeh.models import Range1d, HoverTool
 
 app = Flask(__name__)
 Compress(app)
@@ -33,12 +33,25 @@ def form_eval():
         trend = trends.get(attr,None)
         if trend is None: continue
 
+        test = list(range(22))
+
         fig = figure(
-            width=800, height=400,
-            tools='save',
+            width = 800, height = 400,
             title = attr,
-            x_axis_label='Year',
-            y_axis_label='Average Rating',
+            x_axis_label = 'Year',
+            y_axis_label = 'Average Rating',
+            tools = [
+                'save',
+                HoverTool(
+                    names=['this_o','other_o'],
+                    tooltips = [
+                        ('year','@year'),
+                        ('num','@num'),
+                        ('rating','@rating{0.00}'),
+                        ('stdev','@stdev{0.00}')
+                    ]
+                )
+            ]
         )
         fig.x_range = Range1d(2000-0.5,2021+0.5)
 
@@ -46,23 +59,29 @@ def form_eval():
             ('this','#FF7F0E'),
             ('other','#1F77B4')
         )):
-            xs, ys = zip(*(
-                [ i+2000, x[1] ]
-                for i,x in enumerate(t)
-                if x[0] > 0
-            ))
+            source = ColumnDataSource( dict(zip(
+                ['year','num','rating','stdev'],
+                zip(*(
+                    [ i+2000, *x ]
+                    for i,x in enumerate(t)
+                    if x[0] > 0
+                ))
+            )))
 
             fig.line(
-                xs, ys,
+                'year', 'rating',
+                source = source,
+                name = f'{name}_o',
                 line_width = 2,
                 color = color,
                 legend_label = name
             )
             fig.circle(
-                xs, ys,
-                size = 5,
+                'year', 'rating',
+                source = source,
+                size = 6,
                 color = color,
-                legend_label = name
+                legend_label = name,
             )
 
         fig.legend.location = 'top_left'
