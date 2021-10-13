@@ -55,6 +55,8 @@ function add_attr_field() {
     e.preventDefault();
     if (div.childElementCount > 1)
       field.remove();
+    else
+      input.value = '';
   });
   b = $(field,'button');
   b.textContent = '+';
@@ -63,23 +65,40 @@ function add_attr_field() {
     add_attr_field();
   });
   const d = $(field,'div',{ style: { display: 'none' } },['drop']);
-  input.addEventListener('keyup',function(){
-    clear(d);
-    const v = this.value.toUpperCase();
-    let hide = true;
-    for (const attr of all_attributes) {
-      if (attr.toUpperCase().indexOf(v) > -1) {
-        const opt = $(d,'div');
-        opt.textContent = attr;
-        const input = this;
-        opt.addEventListener('click',function(){
-          input.value = attr;
-          clear(d).style.display = 'none';
-        });
-        if (hide) hide = false;
-      }
+  let stop_keyup = false;
+  input.addEventListener('keydown',function(e){
+    const key = e.keyCode;
+    if (key==13) {
+      e.preventDefault();
+      stop_keyup = true;
+      _id('form').querySelector('input[type="submit"]').click();
+    } else if (key==27) {
+      e.preventDefault();
+      stop_keyup = true;
+      clear(d).style.display = 'none';
     }
-    d.style.display = hide ? 'none' : null;
+  });
+  input.addEventListener('keyup',function(e){
+    if (stop_keyup) {
+      stop_keyup = false;
+    } else {
+      clear(d);
+      let hide = true;
+      const v = this.value.toUpperCase();
+      for (const attr of all_attributes) {
+        if (attr.toUpperCase().indexOf(v) > -1) {
+          const opt = $(d,'div');
+          opt.textContent = attr;
+          const input = this;
+          opt.addEventListener('click',function(){
+            input.value = attr;
+            clear(d).style.display = 'none';
+          });
+          if (hide) hide = false;
+        }
+      }
+      d.style.display = hide ? 'none' : null;
+    }
   });
 }
 
