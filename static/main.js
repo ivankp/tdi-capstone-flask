@@ -96,11 +96,18 @@ document.addEventListener('DOMContentLoaded', () => {
       body: JSON.stringify(req)
     }).then(r => r.json()
     ).then(r => {
-      const div = clear(_id('trends'));
-      for (const [i,fig] of enumerate(r.trends)) {
-        const id = `trend_${i}`;
-        $(div,'div',{id});
-        Bokeh.embed.embed_item(fig,id);
+      { const div = clear(_id('ml'));
+        const pca = r.ml.pca.map(x => x.toFixed(3)).join(',');
+        $(div,'p').textContent = `PCA projection: (${pca})`;
+        $(div,'p').textContent =
+          `Rating prediction: ${r.ml.rating.toFixed(3)} stdev from average`;
+      }
+      { const div = clear(_id('trends'));
+        for (const [i,fig] of enumerate(r.trends)) {
+          const id = `trend_${i}`;
+          $(div,'div',{id});
+          Bokeh.embed.embed_item(fig,id);
+        }
       }
     }).catch(e => { console.error(e); });
   });

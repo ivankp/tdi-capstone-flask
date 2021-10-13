@@ -2,3 +2,7 @@ flask
 flask_compress
 gunicorn
 bokeh
+numpy
+lzma
+dill
+sklearn
