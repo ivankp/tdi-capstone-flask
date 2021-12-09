@@ -78,7 +78,7 @@ function add_attr_field() {
       clear(d).style.display = 'none';
     }
   });
-  input.addEventListener('keyup',function(e){
+  function dropdown(e) {
     if (stop_keyup) {
       stop_keyup = false;
     } else {
@@ -87,7 +87,7 @@ function add_attr_field() {
       const v = this.value.toUpperCase();
       for (const attr of all_attributes) {
         if (attr.toUpperCase().indexOf(v) > -1) {
-          const opt = $(d,'div');
+          const opt = $(d,'div',{'tabindex':-1});
           opt.textContent = attr;
           const input = this;
           opt.addEventListener('click',function(){
@@ -99,6 +99,13 @@ function add_attr_field() {
       }
       d.style.display = hide ? 'none' : null;
     }
+  }
+  input.addEventListener('keyup',dropdown);
+  input.addEventListener('focusin',dropdown);
+  input.addEventListener('focusout',function(e){
+    const t = e.relatedTarget;
+    if (t) t.click();
+    clear(d).style.display = 'none';
   });
 }
 
