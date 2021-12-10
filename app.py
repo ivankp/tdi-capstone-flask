@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import json
+import json, math
 
 from flask import Flask, render_template, request, Response
 from flask_compress import Compress
@@ -13,59 +13,60 @@ from bokeh.models import Range1d, HoverTool
 import numpy as np
 
 import dill, lzma
-# import time
+import time
 
 app = Flask(__name__)
 Compress(app)
 
-with open('attrs.js') as f:
-    attrs = f.read()
-
-with open('trends.json') as f:
-    trends = json.load(f)
-
 with lzma.open('model.dill.xz') as f:
-    # t = time.process_time()
+    t = time.process_time()
     globals().update(dill.load(f))
-    # elapsed_time = time.process_time() - t
-    # print(f'model data loaded in {elapsed_time:.2} sec')
+    elapsed_time = time.process_time() - t
+    print(f'model data loaded in {elapsed_time:.2} sec')
 
 @app.route('/')
 def index():
     return render_template('index.html',
-        script=attrs, head=CDN.render()
+        script=f'const all_attributes = {all_attrs};', head=CDN.render()
     )
+
+def convert_moments(m):
+    m = list(m)
+    m[1] /= m[0]
+    m[2] = math.sqrt(m[2]/m[0] - m[1]*m[1])
+    return m
 
 @app.route('/eval',methods=['POST'])
 def form_eval():
     req = json.loads(request.data)
 
     # get ML model prediction ---------------------------------------
-    attrs_encoded = np.zeros(len(attr_map),dtype=int)
-    for attr in req['attrs']:
-        i = attr_map.get(attr,None)
-        if not (i is None):
-            attrs_encoded[i] = 1
+    n_attrs = len(all_attrs)
+    attrs = [ x for x in req['attrs'] if 0 <= x < n_attrs ]
+    attrs_encoded = np.zeros(n_attrs,dtype=bool)
+    attrs_encoded[attrs] = True
     # print(attrs_encoded)
 
     attrs_pca = pca.transform(attrs_encoded.reshape(1,-1))
     # print(attrs_pca)
     # print(attrs_pca[0,:2])
 
-    rating = forest.predict(attrs_pca)
+    rating = forest.predict(
+        np.concatenate((
+            attrs_pca,
+            [[ req['age'], *sorted(req['npl']), *sorted(req['dur']) ]]
+        ), axis=1)
+    )
     # print(rating)
 
-    # plots trends for selected attributes --------------------------
+    # plot trends for selected attributes ---------------------------
     trend_plots = [ ]
-    for attr in req['attrs']:
-        trend = trends.get(attr,None)
-        if trend is None: continue
-
-        test = list(range(22))
+    for attr in attrs:
+        trend = trends[attr]
 
         fig = figure(
             width = 800, height = 400,
-            title = attr,
+            title = all_attrs[attr],
             x_axis_label = 'Year',
             y_axis_label = 'Average Rating',
             tools = [
@@ -83,16 +84,16 @@ def form_eval():
         )
         fig.x_range = Range1d(2000-0.5,2021+0.5)
 
-        for t,(name,color) in zip(trend, (
-            ('this','#FF7F0E'),
-            ('other','#1F77B4')
-        )):
+        for t,name,color in (
+            (trend          , 'this' , '#FF7F0E'),
+            (trend_all-trend, 'other', '#1F77B4')
+        ):
             source = ColumnDataSource( dict(zip(
                 ['year','num','rating','stdev'],
                 zip(*(
-                    [ i+2000, *x ]
-                    for i,x in enumerate(t)
-                    if x[0] > 0
+                    [ i+2000, *convert_moments(m) ]
+                    for i,m in enumerate(t)
+                    if m[0] > 0
                 ))
             )))
 

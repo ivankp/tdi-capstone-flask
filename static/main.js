@@ -43,6 +43,18 @@ function* enumerate(xs,i=0) {
   for (const x of xs) yield [i++, x];
 }
 
+function binary_search(a,x) {
+  // https://stackoverflow.com/a/44981570/2640636
+  let n = a.length-1 |0;
+  for (let i=0x80000000; i; i >>>= 1) {
+    if (n & i) {
+      const noCBit = n & ~(i-1);
+      n ^= ( (n ^ (noCBit-1)) & ((a[noCBit] <= x |0) - 1 >>> 0) );
+    }
+  }
+  return a[n] === x ? n : -1;
+}
+
 function add_attr_field() {
   const div = _id('attrs');
   const field = $(div,'div',['field']);
@@ -87,7 +99,7 @@ function add_attr_field() {
       const v = this.value.toUpperCase();
       for (const attr of all_attributes) {
         if (attr.toUpperCase().indexOf(v) > -1) {
-          const opt = $(d,'div',{'tabindex':-1});
+          const opt = $(d,'div',{ tabindex: -1 });
           opt.textContent = attr;
           const input = this;
           opt.addEventListener('click',function(){
@@ -115,7 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
   _id('form').addEventListener('submit',function(e){
     e.preventDefault();
     const req = {
-      attrs: [ ...this.querySelectorAll('#attrs input') ].map(x => x.value)
+      attrs: [ ...this.querySelectorAll('#attrs input') ].map(
+        x => binary_search(all_attributes,x.value)
+      ).filter(i => i !== -1),
+      age: parseInt(_id('age').value),
+      npl: ['npl_min','npl_max'].map(x => parseInt(_id(x).value)),
+      dur: ['dur_min','dur_max'].map(x => parseInt(_id(x).value))
     };
     fetch('eval', {
       method: 'POST',
